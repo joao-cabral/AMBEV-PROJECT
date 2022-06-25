@@ -1,0 +1,16 @@
+node_modules
+package-lock.json
+coverage
+build
+dist
+.DS_Store
+*.log*
+release/*
+assets/dist
+backend.exe
+dbdata
+.vscode
+
+.editorconfig
+!.env
+.env.local

@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+model Brand { 
+  id          String   @id @default(uuid())
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  name        String   @unique
+  logo        String?
+  description String?
+  beers       Beer[]
+
+  @@map("brands")
+}
+model Beer {
+  id          String    @id @default(uuid())
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  name        String    @unique
+  logo        String?   
+  nationality String?  
+  description String?
+  brand       Brand?    @relation(fields: [id_brand], references: [id])
+  id_brand    String
+  beer_type   BeerType? @relation(fields:[id_type],references: [id])
+  id_type     String
+  beercharacteristics   BeerCharacteristics[]
+
+  @@map("beers")
+}
+
+model BeerCharacteristics {
+  id                      String    @id @default(uuid())
+  created_at              DateTime  @default(now())
+  updated_at              DateTime  @updatedAt
+  percent_alcohol         Decimal 
+  ideal_temperature       Decimal
+  ibu                     Decimal
+  ingredients             String
+  allergic_ingredients    String
+  nutricional_information String 
+  calories                String
+  carbohydrates           String
+  color                   String?
+  beer                    Beer? @relation(fields:[id_beer],references: [id])
+  id_beer                 String  
+
+  @@map("beer_characteristics")
+}
+
+model BeerType {
+  id          String   @id @default(uuid())
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  name        String   @unique
+  beers       Beer[]
+  
+  @@map("beer_types")
+}
+
+
+

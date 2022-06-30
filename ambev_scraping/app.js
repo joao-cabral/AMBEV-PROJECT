@@ -66,9 +66,27 @@ async function getElementsBeer(link) {
     const page = await browser.newPage();
     await page.goto(link);
     await page.waitForTimeout(1000);
+
+    const beerInformation = {
+        name: '',
+        logo: '',
+        nationality: '',
+        description: '',
+        percent_alcohol: '',
+        ideal_temperature: '',
+        ibu: '',
+        ingredients: '',
+        allergic_ingredients: '',
+        nutricional_information: '',
+        calories: '',
+        carbohydrates: '',
+        color: ''
+    };
     
     //Pegar os textos dos ingredientes e alergênicos
-    const allergicAndIngredients = await page.$$eval('body > div.page-wrap > div.internal-page > section.main-section__wrap.product-info > div.product-info__description-wrapper > div.product-info__text-feature.product-info__no-mobile',
+    
+    try{
+        const allergicAndIngredients = await page.$$eval('body > div.page-wrap > div.internal-page > section.main-section__wrap.product-info > div.product-info__description-wrapper > div.product-info__text-feature.product-info__no-mobile',
             elements => {
                 const allergicAndIngredients = []
                 elements.forEach(element => {
@@ -77,53 +95,107 @@ async function getElementsBeer(link) {
                 return allergicAndIngredients;
             }
         );
+        beerInformation.ingredients = allergicAndIngredients[0];
+        beerInformation.allergic_ingredients = allergicAndIngredients[1];
+        }catch(error){
+            console.log('Error happened in calories: ', error);
+            beerInformation.ingredients = 'Error';
+            beerInformation.allergic_ingredients = 'Error';
+        }
     
     //TODO: Fazer condicionais para quando nao tiver os valores procurados
 
-    const name = await page.locator('body > div.page-wrap > div.internal-page > section > div.product-info__description-wrapper > h1 > span').textContent();
-    const logo = await page.locator('body > div.page-wrap > div.internal-page > section.main-section__wrap.product-info > div.product-info__description-wrapper > div.product-info__logo-wrapper > a').href;
-    const nationality = await page.locator('body > div.page-wrap > div.internal-page > section.main-section__wrap.product-info > div.product-info__description-wrapper > div.product-info__category > div > img').href;
-    const description = await page.locator('body > div.page-wrap > div.internal-page > section.main-section__wrap.product-info > div.product-info__description-wrapper > div.product-info__description--has-socials.product-info__no-desktop > p').textContent();
-    const percent_alcohol = await page.locator('#product-additional-info > p.product-info__item.product-info__item-icon.product-info__item-icon--alcohol-content').textContent();
-    const ideal_temperature = await page.locator('#product-additional-info > p.product-info__item.product-info__item-icon.product-info__item-icon--ideal-temperature').textContent();
-    const ibu =  await page.locator('#product-additional-info > p.product-info__item.product-info__item-icon.product-info__item-icon--ibu').textContent();
+    try{
+        beerInformation.name = await page.locator('body > div.page-wrap > div.internal-page > section > div.product-info__description-wrapper > h1 > span').textContent();
+    }catch(error){
+        console.log('Error happened in name: ', error);
+        beerInformation.name = 'Error';
+    }
     
-    const ingredients = allergicAndIngredients[0].split(':')[1];
-    const allergic_ingredients = allergicAndIngredients[1].split(':')[1];
+    try{
+        beerInformation.logo = await page.locator('body > div.page-wrap > div.internal-page > section.main-section__wrap.product-info > div.product-info__description-wrapper > div.product-info__logo-wrapper > a').href();
+    }catch(error){
+        console.log('Error happened in logo: ', error);
+        beerInformation.logo = 'Error';
+    }
+
+    try{
+        beerInformation.nationality = await page.locator('body > div.page-wrap > div.internal-page > section.main-section__wrap.product-info > div.product-info__description-wrapper > div.product-info__category > div > img').href();        
+    }catch(error){
+        console.log('Error happened in nationality: ', error);
+        beerInformation.nationality = 'Error';
+    }
     
-    const nutricional_information = await page.locator('#product-additional-info > p.product-info__item.product-info__item-icon--nutritional-information.product-info__item-nutritional-information.product-info__item-nutritional-information--active').textContent();
-    const calories = await page.locator('#product-additional-info > p.product-info__item.product-info__item-icon.product-info__item-icon--calories.product-info__item-calories.product-info__item-calories--active').textContent();
-    const carbohydrates = await page.locator('#product-additional-info > p.product-info__item.product-info__item-icon.product-info__item-icon--carbohydrates.product-info__item-carbohydrates.product-info__item-carbohydrates--active').textContent();
+    try{
+        beerInformation.description = await page.locator('body > div.page-wrap > div.internal-page > section.main-section__wrap.product-info > div.product-info__description-wrapper > div.product-info__description--has-socials.product-info__no-desktop > p').textContent();        
+    }catch(error){
+        console.log('Error happened in description: ', error);
+        beerInformation.description = 'Error';
+    }
     
+    try{
+        beerInformation.percent_alcohol = await page.locator('#product-additional-info > p.product-info__item.product-info__item-icon.product-info__item-icon--alcohol-content').textContent();
+    }catch(error){
+        console.log('Error happened in percent_alcohol: ', error);
+        beerInformation.percent_alcohol = 'Error';
+    }
+    
+    try{
+        beerInformation.ideal_temperature = await page.locator('#product-additional-info > p.product-info__item.product-info__item-icon.product-info__item-icon--ideal-temperature').textContent();     
+    }catch(error){
+        console.log('Error happened in ideal_temperature: ', error);
+        beerInformation.ideal_temperature = 'Error';
+    }
+
+    
+    try{
+        beerInformation.ibu =  await page.locator('#product-additional-info > p.product-info__item.product-info__item-icon.product-info__item-icon--ibu').textContent();
+    }catch(error){
+        console.log('Error happened in ibu: ', error);
+        beerInformation.ibu = 'Error';
+    }
+    
+    try{
+        beerInformation.nutricional_information = await page.locator('#product-additional-info > p.product-info__item.product-info__item-icon--nutritional-information.product-info__item-nutritional-information.product-info__item-nutritional-information--active').textContent();
+    }catch(error){
+        console.log('Error happened in nutricional_information: ', error);
+        beerInformation.nutricional_information = 'Error';
+    }
+    
+    try{
+        beerInformation.calories = await page.locator('#product-additional-info > p.product-info__item.product-info__item-icon.product-info__item-icon--calories.product-info__item-calories.product-info__item-calories--active').textContent();
+    }catch(error){
+        console.log('Error happened in calories: ', error);
+        beerInformation.calories = 'Error';
+    }
+
+    
+    try{
+        beerInformation.carbohydrates = await page.locator('#product-additional-info > p.product-info__item.product-info__item-icon.product-info__item-icon--carbohydrates.product-info__item-carbohydrates.product-info__item-carbohydrates--active').textContent();
+    }catch(error){
+        console.log('Error happened in calories: ', error);
+        beerInformation.carbohydrates = 'Error';
+    }
+
     //min:2 / max: 173 / step: 19 => n / 171
     //TODO: implementar condicionais para quando nao tiver cor
     const color = await getColor() / 171;
 
     async function getColor(){
-        const rootDiv = page.locator('#product-additional-info > p.product-info__item.product-info__color');
-        const color = await rootDiv.evaluate((element) => {
-            return window.getComputedStyle(element, 'before').getPropertyValue("left")
-        });
-        return color;
+        try{
+            const rootDiv = page.locator('#product-additional-info > p.product-info__item.product-info__color');
+            const color = await rootDiv.evaluate((element) => {
+                return window.getComputedStyle(element, 'before').getPropertyValue("left")
+            });
+            beerInformation.color = color / 171;
+            return color;
+        }catch(error){
+            console.log('Error happened in calories: ', error);
+            beerInformation.color = 'Error';
+        }
     }
 
-    const typeBeer = {
-        name: name,
-        logo: logo,
-        nationality: nationality,
-        description: description,
-        percent_alcohol: percent_alcohol,
-        ideal_temperature: ideal_temperature,
-        ibu: ibu,
-        ingredients: ingredients,
-        allergic_ingredients: allergic_ingredients,
-        nutricional_information: nutricional_information,
-        calories: calories,
-        carbohydrates: carbohydrates,
-        color: color
-    };
-
-    console.log(typeBeer);
+    console.log(beerInformation);
 
     await browser.close();
 }

@@ -1,7 +1,7 @@
 const { chromium, TimeoutError } = require('playwright');
 
 async function getElementsBeer() {
-    const link = "https://www.ambev.com.br/marcas/cervejas/andes/andes/";
+    const link = "https://www.ambev.com.br/marcas/cervejas/tres-fidalgas/tres-fidalgas/";
     const browser = await chromium.launch({headless: false, slowMo: 100});
     const page = await browser.newPage();
     await page.goto(link);
